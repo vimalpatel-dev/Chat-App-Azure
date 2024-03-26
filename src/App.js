@@ -1,17 +1,41 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
 import UserChat from "./components/UserChat";
 import SelfChat from "./components/SelfChat";
 import { useMyClientContext } from "./context/client";
 import { Link } from "react-router-dom";
+import Modal from "./components/Modal";
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
   const { client, setClient, user, setUser } = useMyClientContext();
-
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
   const [chats, setChats] = useState([]);
   // const [client, setClient] = useState(null);
+
+  useEffect(() => {
+    if (client) {
+      client.on("connected", (e) => {
+        console.log(`Connection ${e.connectionId} is connected.`);
+      });
+
+      // From Server Message
+      client.on("server-message", (e) => {
+        const data = e.message.data;
+        appendMessage(data);
+        console.log("Server-Message", data);
+      });
+
+      //On Group Message
+      client.on("group-message", (e) => {
+        const data = e.message.data;
+        appendMessage(data);
+      });
+    }
+  }, [client]);
 
   async function connect() {
     const client = new WebPubSubClient({
@@ -24,22 +48,7 @@ const App = () => {
     });
 
     // On Connection Established
-    client.on("connected", (e) => {
-      console.log(`Connection ${e.connectionId} is connected.`);
-    });
 
-    // From Server Message
-    client.on("server-message", (e) => {
-      const data = e.message.data;
-      appendMessage(data);
-      console.log("Server-Message", data);
-    });
-
-    //On Group Message
-    client.on("group-message", (e) => {
-      const data = e.message.data;
-      appendMessage(data);
-    });
     await client.start();
     await client.joinGroup("chat"); // Joining Group
     setClient(client);
@@ -93,6 +102,10 @@ const App = () => {
     </div>
   );
 
+  const navigation = (input) => {
+    navigate(`/${input}`);
+  };
+
   const messagePage = (
     <div className="message-page">
       <div className="chat-messages">
@@ -121,14 +134,26 @@ const App = () => {
           Send
         </button>
 
-        <Link to={"/vimal123"} className="send-button">
+        <button
+          className="send-button"
+          type="button"
+          onClick={() => setModalOpen(true)}
+        >
+          User Message
+        </button>
+        {/* <Link to={"/vimal123"} className="send-button">
           Go to Page
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
 
-  return <div className="CHAT-APP">{!client ? loginPage : messagePage}</div>;
+  return (
+    <div className="CHAT-APP">
+      <Modal isOpen={modalOpen} onClose={navigation} />
+      {!client ? loginPage : messagePage}
+    </div>
+  );
 };
 
 export default App;

@@ -9,18 +9,20 @@ const serviceClient = require("./util/ServiceClient");
 const app = express();
 const port = process.env.PORT;
 
+app.use(express.json());
 app.use(cors());
 
 app.get("/get-access-token", getClientAccessUrl);
 
 app.get("/send-to-all", sendToAll);
 
-app.get("/test", async (req, res) => {
-  const userExists = await serviceClient.userExists("user123");
+app.post("/test", async (req, res) => {
+  console.log("request body", req.body);
+  const userExists = await serviceClient.userExists(req.query?.userId);
   console.log("user exist", userExists);
-  await serviceClient.sendToUser("user123", {
-    message: "Person to Person Message ! Great!!!",
-  });
+  if (userExists) {
+    await serviceClient.sendToUser(req.query?.userId, req.body);
+  }
   res.status(200).send({});
 });
 

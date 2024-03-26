@@ -1,16 +1,17 @@
 import "./App.css";
 import React, { useState } from "react";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import UserChat from "./components/UserChat";
 import SelfChat from "./components/SelfChat";
-import UserMesageSend from "./Pages/UserMesageSend";
+import { useMyClientContext } from "./context/client";
+import { Link } from "react-router-dom";
 
 const App = () => {
-  const [user, setUser] = useState("");
+  const { client, setClient, user, setUser } = useMyClientContext();
+
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
-  const [client, setClient] = useState(null);
+  // const [client, setClient] = useState(null);
 
   async function connect() {
     const client = new WebPubSubClient({
@@ -30,6 +31,7 @@ const App = () => {
     // From Server Message
     client.on("server-message", (e) => {
       const data = e.message.data;
+      appendMessage(data);
       console.log("Server-Message", data);
     });
 
@@ -118,22 +120,15 @@ const App = () => {
         >
           Send
         </button>
+
+        <Link to={"/vimal123"} className="send-button">
+          Go to Page
+        </Link>
       </div>
     </div>
   );
 
-  return (
-    <div className="CHAT-APP">
-      <Routes>
-        <Route
-          path="/:userId"
-          element={<UserMesageSend client={client} />}
-        ></Route>
-      </Routes>
-
-      {!client ? loginPage : messagePage}
-    </div>
-  );
+  return <div className="CHAT-APP">{!client ? loginPage : messagePage}</div>;
 };
 
 export default App;

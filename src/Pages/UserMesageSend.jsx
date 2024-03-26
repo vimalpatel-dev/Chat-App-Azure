@@ -1,12 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelfChat from "../components/SelfChat";
 import UserChat from "../components/UserChat";
+import "../App.css";
+import { useMyClientContext } from "../context/client";
+import { Link } from "react-router-dom";
+import { WebPubSubClient } from "@azure/web-pubsub-client";
+import { BrowserRouter as Router, Route, Switch, useParams } from 'react-router-dom';
 
-function UserMesageSend({client}) {
-
-	const [user, setUser] = useState("");
+function UserMesageSend() {
+	let { userId } = useParams();
+	const { client, setClient,  user, setUser } = useMyClientContext();
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
+
+	useEffect(()=>{
+		if(client){
+		client.on("server-message", (e) => {
+      const data = e.message.data;
+      appendMessage(data);
+      console.log("Server-Message", data?.from);
+    });
+	}
+
+	},[])
+	async function connect() {
+    const client = new WebPubSubClient({
+      getClientAccessUrl: async () =>
+        (
+          await fetch(
+            `${process.env.REACT_APP_BASE_URL}get-access-token?user=${user}`
+          )
+        ).text(),
+    });
+
+    // On Connection Established
+    client.on("connected", (e) => {
+      console.log(`Connection ${e.connectionId} is connected.`);
+    });
+
+    // From Server Message
+  
+    //On Group Message
+    client.on("group-message", (e) => {
+      const data = e.message.data;
+      appendMessage(data);
+    });
+    await client.start();
+    await client.joinGroup("chat"); // Joining Group
+    setClient(client);
+  }
 
 	async function send() {
     try {
@@ -15,12 +57,14 @@ function UserMesageSend({client}) {
         message: message,
       };
       setMessage("");
-      await client.sendToGroup("chat", chat, "json", { noEcho: true });
-
-      //Send request To Server for Sending Broadcast message
-      // await fetch("http://localhost:8080/send-to-all");
-      await fetch("http://localhost:8080/test");
-
+    
+      await fetch(`http://localhost:8080/test?userId=${userId}`,{
+				method:'POST',
+				headers:{
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(chat)
+			});
       appendMessage(chat);
     } catch (err) {
       console.log("error", err);
@@ -30,6 +74,31 @@ function UserMesageSend({client}) {
 	function appendMessage(data) {
     setChats((prev) => [...prev, data]);
   }
+
+
+	const loginPage = (
+    <div className="login-container">
+      <div className="login-form">
+        <input
+          autoFocus
+          type="text"
+          className="username-input"
+          placeholder="Username"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
+        />
+        <div className="login-button-container">
+          <button
+            className="login-button"
+            type="button"
+            disabled={!user}
+          >
+            Connect
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
 	const messagePage = (
     <div className="message-page">
@@ -58,15 +127,16 @@ function UserMesageSend({client}) {
         >
           Send
         </button>
+				<Link to={"/"} className="send-button">
+          Home Page
+        </Link>
       </div>
     </div>
   );
 
-
-
 	return (
 		<div>
-			{messagePage}
+			{!client ? loginPage : messagePage}
 		</div>
 	)
 }

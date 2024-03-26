@@ -3,15 +3,20 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MyProvider } from "./context/client";
+import UserMesageSend from "./Pages/UserMesageSend";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  <MyProvider>
     <BrowserRouter>
-      <App />
+      <Routes>
+        <Route path="/" element={<App />}></Route>
+        <Route path="/:userId" element={<UserMesageSend />}></Route>
+      </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </MyProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

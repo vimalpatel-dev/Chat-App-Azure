@@ -1,8 +1,10 @@
 import "./App.css";
 import React, { useState } from "react";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import UserChat from "./components/UserChat";
 import SelfChat from "./components/SelfChat";
+import UserMesageSend from "./Pages/UserMesageSend";
 
 const App = () => {
   const [user, setUser] = useState("");
@@ -120,7 +122,18 @@ const App = () => {
     </div>
   );
 
-  return !client ? loginPage : messagePage;
+  return (
+    <div className="CHAT-APP">
+      <Routes>
+        <Route
+          path="/:userId"
+          element={<UserMesageSend client={client} />}
+        ></Route>
+      </Routes>
+
+      {!client ? loginPage : messagePage}
+    </div>
+  );
 };
 
 export default App;

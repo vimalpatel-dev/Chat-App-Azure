@@ -18,7 +18,9 @@ app.get("/send-to-all", sendToAll);
 app.get("/test", async (req, res) => {
   const userExists = await serviceClient.userExists("user123");
   console.log("user exist", userExists);
-  serviceClient.sendToUser("user123");
+  await serviceClient.sendToUser("user123", {
+    message: "Person to Person Message ! Great!!!",
+  });
   res.status(200).send({});
 });
 

@@ -1,10 +1,12 @@
 const express = require("express");
 const notificationsController = require("../Controllers/notification_controller");
+const validateStoreNotificationRequest = require("../Middleware/notification.middleware");
 const notificationRouter = express.Router();
 
 // Store Notification
 notificationRouter.post(
   "/notifications",
+  validateStoreNotificationRequest,
   notificationsController.storeNotification
 );
 

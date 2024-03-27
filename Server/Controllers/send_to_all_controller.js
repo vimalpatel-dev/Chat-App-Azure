@@ -7,7 +7,8 @@ async function sendToAll(req, res) {
     });
     res.status(200).json({});
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 }
 

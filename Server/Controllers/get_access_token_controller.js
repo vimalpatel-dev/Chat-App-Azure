@@ -8,7 +8,8 @@ async function getClientAccessUrl(req, res, next) {
     });
     res.status(200).send(token.url);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 }
 

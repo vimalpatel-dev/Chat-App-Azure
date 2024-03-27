@@ -1,6 +1,6 @@
 const serviceClient = require("../Util/service_client");
 
-async function sendToUserId(req, res) {
+async function sendToUserId(req, res, next) {
   try {
     console.log("request body", req.body);
     const userExists = await serviceClient.userExists(req.query?.userId);
@@ -10,7 +10,8 @@ async function sendToUserId(req, res) {
     }
     res.status(200).send({});
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 }
 

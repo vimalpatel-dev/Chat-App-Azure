@@ -6,7 +6,7 @@ exports.storeNotification = async (req, res) => {
     const { title, message } = req.body;
     const notification = new Notification({ title, message });
     await notification.save();
-    res.status(201).json(notification);
+    res.status(201).json({ data: notification, statusCode: 201 });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -21,9 +21,10 @@ exports.getNotifications = async (req, res) => {
     const notifications = await Notification.find({ deleted: false })
       .skip(skipCount)
       .limit(parseInt(limit));
-    res.json(notifications);
+    res.json({ data: notification, statusCode: 200 });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -34,9 +35,14 @@ exports.readAllNotifications = async (req, res) => {
       { deleted: false, read: false },
       { read: true }
     );
-    res.json({ message: "All notifications marked as read" });
+    res.json({
+      message: "All notifications marked as read",
+      data: [],
+      statusCode: 200,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -44,9 +50,14 @@ exports.readAllNotifications = async (req, res) => {
 exports.clearAllNotifications = async (req, res) => {
   try {
     await Notification.updateMany({ deleted: false }, { deleted: true });
-    res.json({ message: "All notifications soft deleted" });
+    res.json({
+      message: "All notifications soft deleted",
+      data: [],
+      statusCode: 200,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -57,8 +68,9 @@ exports.getUnreadCount = async (req, res) => {
       read: false,
       deleted: false,
     });
-    res.json({ unreadCount });
+    res.json({ data: unreadCount, statusCode: 201 });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 };

@@ -1,6 +1,6 @@
 const express = require("express");
 const notificationRouter = require("./notificatios.route");
-const eventRoute = require("./event.route");
+const eventRoute = require("./stream_event.route");
 
 const routes = express.Router();
 

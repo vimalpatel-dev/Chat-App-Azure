@@ -11,7 +11,6 @@ async function sendToUserId(req, res, next) {
     res.status(200).send({});
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 }
 

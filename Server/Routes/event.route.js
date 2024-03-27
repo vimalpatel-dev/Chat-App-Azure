@@ -8,5 +8,5 @@ const eventRoute = express.Router();
 eventRoute.get("/get-access-token", getClientAccessUrl);
 eventRoute.get("/send-to-all", sendToAll);
 eventRoute.post("/send-to-userId", sendToUserId);
-// eventRoute.get("/send-to-userId", sendToUserId);
+
 module.exports = eventRoute;

@@ -23,7 +23,7 @@ const notificationSchema = new mongoose.Schema({
   },
   read_datetime: {
     type: Date,
-    default: Date.now,
+    default: null,
   },
   deleted: {
     type: Boolean,

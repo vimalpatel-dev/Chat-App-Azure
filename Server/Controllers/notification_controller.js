@@ -3,13 +3,16 @@ const Notification = require("../Models/notification.schema");
 // Store notification
 exports.storeNotification = async (req, res) => {
   try {
-    const { title, message } = req.body;
-    const notification = new Notification({ title, message });
+    const { title, message, user_id } = req.body;
+    const notification = new Notification({ title, message, user_id });
     await notification.save();
-    res.status(201).json({ data: notification, statusCode: 201 });
+    res.status(201).json({
+      statusCode: 201,
+      message: "Notification stored successfully",
+      data: notification,
+    });
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -22,10 +25,13 @@ exports.getNotifications = async (req, res) => {
     const notifications = await Notification.find({ deleted: false })
       .skip(skipCount)
       .limit(parseInt(limit));
-    res.json({ data: notification, statusCode: 200 });
+    res.json({
+      statusCode: 200,
+      message: "Notifications retrieved successfully",
+      data: notifications,
+    });
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -34,31 +40,32 @@ exports.readAllNotifications = async (req, res) => {
   try {
     await Notification.updateMany(
       { deleted: false, read: false },
-      { read: true }
+      { read: true, read_datetime: new Date() }
     );
     res.json({
+      statusCode: 200,
       message: "All notifications marked as read",
       data: [],
-      statusCode: 200,
     });
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 };
 
 //  Clear All notification
 exports.clearAllNotifications = async (req, res) => {
   try {
-    await Notification.updateMany({ deleted: false }, { deleted: true });
+    await Notification.updateMany(
+      { deleted: false },
+      { deleted: true, deleted_time: new Date() }
+    );
     res.json({
+      statusCode: 200,
       message: "All notifications soft deleted",
       data: [],
-      statusCode: 200,
     });
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 };
 
@@ -69,9 +76,12 @@ exports.getUnreadCount = async (req, res) => {
       read: false,
       deleted: false,
     });
-    res.json({ data: unreadCount, statusCode: 201 });
+    res.json({
+      statusCode: 200,
+      message: "Unread count retrieved successfully",
+      data: unreadCount,
+    });
   } catch (error) {
     next({ statusCode: 500, message: error.message });
-    // res.status(500).json({ error: error.message });
   }
 };

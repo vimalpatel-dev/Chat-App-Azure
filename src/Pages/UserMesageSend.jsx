@@ -67,7 +67,7 @@ function UserMesageSend() {
       };
       setMessage("");
 
-      await fetch(`http://localhost:8080/test?userId=${userId}`, {
+      await fetch(`http://localhost:8080/send-to-userId?userId=${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

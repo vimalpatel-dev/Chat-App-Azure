@@ -1,4 +1,4 @@
-const serviceClient = require("../util/ServiceClient");
+const serviceClient = require("../util/service_client");
 
 async function getClientAccessUrl(req, res) {
   let token = await serviceClient.getClientAccessToken({

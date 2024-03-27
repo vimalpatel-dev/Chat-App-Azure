@@ -1,4 +1,4 @@
-const serviceClient = require("../util/ServiceClient");
+const serviceClient = require("../util/service_client");
 
 async function sendToAll(req, res) {
   await serviceClient.sendToAll("Hi there, This is Server Message!", {

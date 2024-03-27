@@ -15,13 +15,14 @@ exports.storeNotificationUsingFrontEnd = async (
 };
 
 // Store notification
-exports.storeNotification = async (req, res) => {
+exports.storeNotification = async (req, res, next) => {
   try {
     const { title, message, user_id } = req.body;
     const notification = new Notification({ title, message, user_id });
     await notification.save();
+    //send notification
     res.status(201).json({
-      statusCode: 201,
+      statusCode: 200,
       message: "Notification stored successfully",
       data: notification,
     });

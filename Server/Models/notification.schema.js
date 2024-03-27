@@ -29,7 +29,7 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  deleted_time: {
+  deleted_datetime: {
     type: Date,
     default: null,
   },

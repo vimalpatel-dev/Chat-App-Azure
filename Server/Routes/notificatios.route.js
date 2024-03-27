@@ -5,32 +5,32 @@ const notificationRouter = express.Router();
 
 // Store Notification
 notificationRouter.post(
-  "/notifications",
+  "/notifications/store",
   // validateStoreNotificationRequest,
   notificationsController.storeNotification
 );
 
 // Notification list with pagination
 notificationRouter.get(
-  "/notifications",
+  "/notifications/list",
   notificationsController.getNotifications
 );
 
 // Read all notification
-notificationRouter.patch(
-  "/notifications-read-all",
+notificationRouter.post(
+  "/notifications/read/all",
   notificationsController.readAllNotifications
 );
 
 // Clear All notification
 notificationRouter.delete(
-  "/notifications",
+  "/notifications/clear/all",
   notificationsController.clearAllNotifications
 );
 
 // Unread count
 notificationRouter.get(
-  "/notifications-unread-count",
+  "/notifications/unread-count",
   notificationsController.getUnreadCount
 );
 

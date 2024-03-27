@@ -6,14 +6,9 @@ exports.storeNotificationUsingFrontEnd = async (
   user_id = "default_uuid"
 ) => {
   try {
-    const { title, message, user_id } = req.body;
     const notification = new Notification({ title, message, user_id });
     await notification.save();
-    res.status(201).json({
-      statusCode: 201,
-      message: "Notification stored successfully",
-      data: notification,
-    });
+    return notification;
   } catch (error) {
     next({ statusCode: 500, message: error.message });
   }

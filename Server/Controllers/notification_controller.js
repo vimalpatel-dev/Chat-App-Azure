@@ -52,9 +52,13 @@ exports.getNotifications = async (req, res) => {
 // Read all notification
 exports.readAllNotifications = async (req, res) => {
   try {
+    const date = new Date();
+    const options = { timeZone: "Asia/Kolkata" };
+    console.log(date.toLocaleString("en-US", options));
+
     await Notification.updateMany(
       { deleted: false, read: false },
-      { read: true, read_datetime: new Date() }
+      { read: true, read_datetime: date.toLocaleString("en-US", options) }
     );
     res.json({
       statusCode: 200,

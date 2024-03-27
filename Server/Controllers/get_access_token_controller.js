@@ -1,6 +1,6 @@
 const serviceClient = require("../Util/service_client");
 
-async function getClientAccessUrl(req, res) {
+async function getClientAccessUrl(req, res, next) {
   try {
     let token = await serviceClient.getClientAccessToken({
       roles: ["webpubsub.sendToGroup.chat", "webpubsub.joinLeaveGroup.chat"],

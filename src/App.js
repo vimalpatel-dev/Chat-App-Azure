@@ -4,7 +4,6 @@ import { WebPubSubClient } from "@azure/web-pubsub-client";
 import UserChat from "./components/UserChat";
 import SelfChat from "./components/SelfChat";
 import { useMyClientContext } from "./context/client";
-import { Link } from "react-router-dom";
 import Modal from "./components/Modal";
 import { useNavigate } from "react-router-dom";
 

@@ -8,7 +8,8 @@ exports.storeNotification = async (req, res) => {
     await notification.save();
     res.status(201).json({ data: notification, statusCode: 201 });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next({ statusCode: 500, message: error.message });
+    // res.status(500).json({ error: error.message });
   }
 };
 

@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
+  user_id: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -17,9 +21,17 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  read_datetime: {
+    type: Date,
+    default: Date.now,
+  },
   deleted: {
     type: Boolean,
     default: false,
+  },
+  deleted_time: {
+    type: Date,
+    default: null,
   },
 });
 

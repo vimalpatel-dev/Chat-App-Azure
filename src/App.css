@@ -75,7 +75,7 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  position: absolute;
+  position: fixed;
   bottom: 4%;
   width: 75%;
 }

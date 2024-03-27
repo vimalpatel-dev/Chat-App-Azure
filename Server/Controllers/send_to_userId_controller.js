@@ -1,4 +1,4 @@
-const serviceClient = require("../util/service_client");
+const serviceClient = require("../Util/service_client");
 
 async function sendToUserId(req, res) {
   console.log("request body", req.body);

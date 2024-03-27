@@ -1,4 +1,4 @@
-const Notification = require("../models/notification");
+const Notification = require("../Models/notification.schema");
 
 // Store notification
 exports.storeNotification = async (req, res) => {
@@ -20,7 +20,10 @@ exports.getNotifications = async (req, res) => {
       page: parseInt(page, 10),
       limit: parseInt(limit, 10),
     };
-    const notifications = await Notification.paginate({}, options);
+    const notifications = await Notification.paginate(
+      { deleted: false },
+      options
+    );
     res.json(notifications);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -30,7 +33,7 @@ exports.getNotifications = async (req, res) => {
 // Read all notification
 exports.readAllNotifications = async (req, res) => {
   try {
-    await Notification.updateMany({}, { read: true });
+    await Notification.updateMany({ deleted: false }, { read: true });
     res.json({ message: "All notifications marked as read" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -40,8 +43,8 @@ exports.readAllNotifications = async (req, res) => {
 //  Clear All notification
 exports.clearAllNotifications = async (req, res) => {
   try {
-    await Notification.deleteMany({});
-    res.json({ message: "All notifications cleared" });
+    await Notification.updateMany({ deleted: false }, { deleted: true });
+    res.json({ message: "All notifications soft deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -50,7 +53,10 @@ exports.clearAllNotifications = async (req, res) => {
 // Unread count
 exports.getUnreadCount = async (req, res) => {
   try {
-    const unreadCount = await Notification.countDocuments({ read: false });
+    const unreadCount = await Notification.countDocuments({
+      read: false,
+      deleted: false,
+    });
     res.json({ unreadCount });
   } catch (error) {
     res.status(500).json({ error: error.message });

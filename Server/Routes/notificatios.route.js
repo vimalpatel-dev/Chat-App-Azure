@@ -1,25 +1,35 @@
 const express = require("express");
 const notificationsController = require("../Controllers/notification_controller");
-const router = express.Router();
+const notificationRouter = express.Router();
 
-router.post("/notifications", notificationsController.storeNotification);
+// Store Notification
+notificationRouter.post(
+  "/notifications",
+  notificationsController.storeNotification
+);
 
 // Notification list with pagination
-router.get("/notifications", notificationsController.getNotifications);
+notificationRouter.get(
+  "/notifications",
+  notificationsController.getNotifications
+);
 
 // Read all notification
-router.patch(
+notificationRouter.patch(
   "/notifications/read-all",
   notificationsController.readAllNotifications
 );
 
 // Clear All notification
-router.delete("/notifications", notificationsController.clearAllNotifications);
+notificationRouter.delete(
+  "/notifications",
+  notificationsController.clearAllNotifications
+);
 
 // Unread count
-router.get(
+notificationRouter.get(
   "/notifications/unread-count",
   notificationsController.getUnreadCount
 );
 
-module.exports = router;
+module.exports = notificationRouter;

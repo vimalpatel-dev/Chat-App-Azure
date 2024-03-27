@@ -16,7 +16,7 @@ notificationRouter.get(
 
 // Read all notification
 notificationRouter.patch(
-  "/notifications/read-all",
+  "/notifications-read-all",
   notificationsController.readAllNotifications
 );
 
@@ -28,7 +28,7 @@ notificationRouter.delete(
 
 // Unread count
 notificationRouter.get(
-  "/notifications/unread-count",
+  "/notifications-unread-count",
   notificationsController.getUnreadCount
 );
 

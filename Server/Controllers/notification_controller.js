@@ -16,14 +16,11 @@ exports.storeNotification = async (req, res) => {
 exports.getNotifications = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const options = {
-      page: parseInt(page, 10),
-      limit: parseInt(limit, 10),
-    };
-    const notifications = await Notification.paginate(
-      { deleted: false },
-      options
-    );
+    const skipCount = (page - 1) * limit;
+
+    const notifications = await Notification.find({ deleted: false })
+      .skip(skipCount)
+      .limit(parseInt(limit));
     res.json(notifications);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -33,7 +30,10 @@ exports.getNotifications = async (req, res) => {
 // Read all notification
 exports.readAllNotifications = async (req, res) => {
   try {
-    await Notification.updateMany({ deleted: false }, { read: true });
+    await Notification.updateMany(
+      { deleted: false, read: false },
+      { read: true }
+    );
     res.json({ message: "All notifications marked as read" });
   } catch (error) {
     res.status(500).json({ error: error.message });

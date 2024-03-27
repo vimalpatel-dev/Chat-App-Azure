@@ -1,4 +1,4 @@
-# Reat Time Notification Using Azure Web-Publish/Subscribe in React+NodeJs
+# RealTime Notification Using Azure Web-Publish/Subscribe in React+NodeJs
 
 # Installation
 

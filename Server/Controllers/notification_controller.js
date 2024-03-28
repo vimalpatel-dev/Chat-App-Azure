@@ -60,6 +60,7 @@ getNotifications = async (req, res, next) => {
       deleted: false,
       user_id: userId,
     })
+      .sort({ datetime: -1 })
       .skip(skipCount)
       .limit(parseInt(limit))
       .select("-__v");
@@ -207,12 +208,6 @@ getUnreadCount = async (req, res, next) => {
     if (!userId) {
       return next({ statusCode: 400, message: "Provide the user ID" });
     }
-
-    // const unreadCount = await Notification.countDocuments({
-    //   read: false,
-    //   deleted: false,
-    //   user_id: userId,
-    // });
 
     const unreadCount = await totalUnreadCount(userId);
     return res.json({

@@ -108,13 +108,9 @@ getNotificationDetail = async (req, res, next) => {
 
     // Mark the notification as read if it's unread
     if (!notification.read) {
-      const nDate = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Calcutta",
-      });
-
       await Notification.updateOne(
         { _id: notificationId },
-        { read: true, read_datetime: nDate }
+        { read: true, read_datetime: new Date() }
       );
     }
 
@@ -135,14 +131,10 @@ readAllNotifications = async (req, res, next) => {
     if (!userId) {
       return next({ statusCode: 400, message: "Provide the user ID" });
     }
-    const nDate = new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Calcutta",
-    });
-    console.log(nDate);
 
     await Notification.updateMany(
       { deleted: false, read: false, user_id: userId },
-      { read: true, read_datetime: nDate }
+      { read: true, read_datetime: new Date() }
     );
     return res.json({
       statusCode: 200,

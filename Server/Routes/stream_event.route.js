@@ -5,7 +5,7 @@ const getClientAccessUrl = require("../Controllers/get_access_token_controller")
 
 const eventRoute = express.Router();
 
-eventRoute.get("/get-access-token", getClientAccessUrl);
+eventRoute.get("/event-stream/get-access-token", getClientAccessUrl);
 // eventRoute.get("/send-to-all", sendToAll);
 // eventRoute.post("/send-to-userId", sendToUserId);
 

@@ -1,4 +1,5 @@
 const Notification = require("../Models/notification.schema");
+const sendToUserId = require("./send_to_userId_controller");
 
 storeNotificationUsingFrontEnd = async (
   title = "default title",
@@ -18,10 +19,25 @@ storeNotificationUsingFrontEnd = async (
 storeNotification = async (req, res, next) => {
   try {
     const { title, message, user_id } = req.body;
+
+    if (!title || !message) {
+      return next({
+        statusCode: 400,
+        message: "Provide the all notification data correctly",
+      });
+    }
+
     const notification = new Notification({ title, message, user_id });
     await notification.save();
+
     //send notification
-    res.status(201).json({
+
+    let notificationSendResponse = await sendToUserId(user_id, notification);
+    if (!notificationSendResponse.success) {
+      return next({ statusCode: 500, message: notificationSendResponse.error });
+    }
+
+    return res.status(201).json({
       statusCode: 200,
       message: "Notification stored successfully",
       data: [],
@@ -32,7 +48,7 @@ storeNotification = async (req, res, next) => {
 };
 
 //  Notification list with pagination
-getNotifications = async (req, res) => {
+getNotifications = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, userId } = req.query;
     if (!userId) {
@@ -45,14 +61,15 @@ getNotifications = async (req, res) => {
       user_id: userId,
     })
       .skip(skipCount)
-      .limit(parseInt(limit));
+      .limit(parseInt(limit))
+      .select("-__v");
 
     const totalRecords = await Notification.countDocuments({
       deleted: false,
       user_id: userId,
     });
     const totalUnreadCounts = await totalUnreadCount(userId);
-    res.json({
+    return res.json({
       statusCode: 200,
       message: "Notifications retrieved successfully",
       data: notifications,
@@ -67,8 +84,52 @@ getNotifications = async (req, res) => {
   }
 };
 
+// Get single notification detail
+getNotificationDetail = async (req, res, next) => {
+  try {
+    const { notificationId } = req.params;
+
+    if (!notificationId) {
+      return next({ statusCode: 400, message: "Provide the notification ID" });
+    }
+
+    // Retrieve the notification details based on ID and user ID
+    const notification = await Notification.findOne({
+      _id: notificationId,
+    }).select("-__v");
+
+    if (!notification) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "Notification not found",
+        data: null,
+      });
+    }
+
+    // Mark the notification as read if it's unread
+    if (!notification.read) {
+      const nDate = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Calcutta",
+      });
+
+      await Notification.updateOne(
+        { _id: notificationId },
+        { read: true, read_datetime: nDate }
+      );
+    }
+
+    return res.json({
+      statusCode: 200,
+      message: "Notification retrieved successfully",
+      data: notification,
+    });
+  } catch (error) {
+    next({ statusCode: 500, message: error.message });
+  }
+};
+
 // Read all notification
-readAllNotifications = async (req, res) => {
+readAllNotifications = async (req, res, next) => {
   try {
     const { userId } = req.query;
     if (!userId) {
@@ -83,7 +144,7 @@ readAllNotifications = async (req, res) => {
       { deleted: false, read: false, user_id: userId },
       { read: true, read_datetime: nDate }
     );
-    res.json({
+    return res.json({
       statusCode: 200,
       message: "All notifications marked as read",
       data: [],
@@ -94,7 +155,7 @@ readAllNotifications = async (req, res) => {
 };
 
 //  Clear All notification
-clearAllNotifications = async (req, res) => {
+clearAllNotifications = async (req, res, next) => {
   try {
     const { userId } = req.query;
     if (!userId) {
@@ -104,7 +165,7 @@ clearAllNotifications = async (req, res) => {
       { deleted: false, user_id: userId },
       { deleted: true, deleted_time: new Date() }
     );
-    res.json({
+    return res.json({
       statusCode: 200,
       message: "All notifications soft deleted",
       data: [],
@@ -114,20 +175,55 @@ clearAllNotifications = async (req, res) => {
   }
 };
 
+// Clear single notification
+clearSingleNotification = async (req, res, next) => {
+  try {
+    const { notificationId } = req.params;
+
+    if (!notificationId) {
+      return next({ statusCode: 400, message: "Provide the notification ID" });
+    }
+
+    // Soft delete the notification
+    const deletedNotification = await Notification.findOneAndUpdate(
+      { _id: notificationId, deleted: false },
+      { deleted: true, deleted_time: new Date() }
+    );
+
+    if (!deletedNotification) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "Notification not found or already deleted",
+        data: null,
+      });
+    }
+
+    return res.json({
+      statusCode: 200,
+      message: "Notification soft deleted",
+      data: [],
+    });
+  } catch (error) {
+    next({ statusCode: 500, message: error.message });
+  }
+};
+
 // Unread count
-getUnreadCount = async (req, res) => {
+getUnreadCount = async (req, res, next) => {
   try {
     const { userId } = req.query;
     if (!userId) {
       return next({ statusCode: 400, message: "Provide the user ID" });
     }
 
-    const unreadCount = await Notification.countDocuments({
-      read: false,
-      deleted: false,
-      user_id: userId,
-    });
-    res.json({
+    // const unreadCount = await Notification.countDocuments({
+    //   read: false,
+    //   deleted: false,
+    //   user_id: userId,
+    // });
+
+    const unreadCount = await totalUnreadCount(userId);
+    return res.json({
       statusCode: 200,
       message: "Unread count retrieved successfully",
       data: unreadCount,
@@ -139,9 +235,6 @@ getUnreadCount = async (req, res) => {
 
 const totalUnreadCount = async (userId) => {
   try {
-    if (!userId) {
-      return next({ statusCode: 400, message: "Provide the user ID" });
-    }
     const unreadCount = await Notification.countDocuments({
       read: false,
       deleted: false,
@@ -149,7 +242,7 @@ const totalUnreadCount = async (userId) => {
     });
     return unreadCount;
   } catch (error) {
-    next({ statusCode: 500, message: error.message });
+    throw error;
   }
 };
 
@@ -159,5 +252,7 @@ module.exports = {
   getNotifications,
   readAllNotifications,
   clearAllNotifications,
+  clearSingleNotification,
   getUnreadCount,
+  getNotificationDetail,
 };

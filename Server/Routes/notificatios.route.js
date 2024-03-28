@@ -16,6 +16,12 @@ notificationRouter.get(
   notificationsController.getNotifications
 );
 
+// Single Notification Detail
+notificationRouter.get(
+  "/notifications/:notificationId/detail",
+  notificationsController.getNotificationDetail
+);
+
 // Read all notification
 notificationRouter.post(
   "/notifications/read/all",
@@ -26,6 +32,12 @@ notificationRouter.post(
 notificationRouter.delete(
   "/notifications/clear/all",
   notificationsController.clearAllNotifications
+);
+
+// Clear Single notification
+notificationRouter.delete(
+  "/notifications/:notificationId/clear",
+  notificationsController.clearSingleNotification
 );
 
 // Unread count

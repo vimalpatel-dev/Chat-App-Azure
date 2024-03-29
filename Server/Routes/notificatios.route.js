@@ -6,7 +6,7 @@ const notificationRouter = express.Router();
 // Store Notification
 notificationRouter.post(
   "/notifications/store",
-  // validateStoreNotificationRequest,
+  validateStoreNotificationRequest,
   notificationsController.storeNotification
 );
 

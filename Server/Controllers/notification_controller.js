@@ -20,26 +20,49 @@ storeNotification = async (req, res, next) => {
   try {
     const { title, message, user_id } = req.body;
 
-    if (!title || !message) {
-      return next({
-        statusCode: 400,
-        message: "Provide the all notification data correctly",
-      });
-    }
+    // if (!title || !message || !user_id || user_id.length === 0) {
+    //   return next({
+    //     statusCode: 400,
+    //     message: "Provide the all notification data correctly",
+    //   });
+    // }
 
-    const notification = new Notification({ title, message, user_id });
-    await notification.save();
+    const notifications = [];
+
+    const savePromises = user_id.map(async (id) => {
+      const notification = new Notification({ title, message, user_id: id });
+      await notification.save();
+      notifications.push(notification);
+      return notification;
+    });
+    await Promise.all(savePromises);
+    // const notification = new Notification({ title, message, user_id });
+    // await notification.save();
 
     //send notification
+    const sendPromises = notifications.map(async (notification) => {
+      const notificationSendResponse = await sendToUserId(
+        notification.user_id,
+        notification
+      );
+      if (!notificationSendResponse.success) {
+        console.error(
+          "Failed to send notification to user ID:",
+          notification.user_id
+        );
+      }
+      return notificationSendResponse;
+    });
+    await Promise.all(sendPromises);
 
-    let notificationSendResponse = await sendToUserId(user_id, notification);
-    if (!notificationSendResponse.success) {
-      return next({ statusCode: 500, message: notificationSendResponse.error });
-    }
+    // let notificationSendResponse = await sendToUserId(user_id, notification);
+    // if (!notificationSendResponse.success) {
+    //   return next({ statusCode: 500, message: notificationSendResponse.error });
+    // }
 
-    return res.status(201).json({
+    return res.status(200).json({
       statusCode: 200,
-      message: "Notification stored successfully",
+      message: "Notification stored and sent successfully",
       data: [],
     });
   } catch (error) {
@@ -69,7 +92,9 @@ getNotifications = async (req, res, next) => {
       deleted: false,
       user_id: userId,
     });
+
     const totalUnreadCounts = await totalUnreadCount(userId);
+
     return res.json({
       statusCode: 200,
       message: "Notifications retrieved successfully",

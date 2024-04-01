@@ -27,19 +27,15 @@ storeNotification = async (req, res, next) => {
     //   });
     // }
 
-    const notifications = [];
+    const notifications = user_id.map((id) => ({
+      title,
+      message,
+      user_id: id,
+    }));
 
-    const savePromises = user_id.map(async (id) => {
-      const notification = new Notification({ title, message, user_id: id });
-      await notification.save();
-      notifications.push(notification);
-      return notification;
-    });
-    await Promise.all(savePromises);
-    // const notification = new Notification({ title, message, user_id });
-    // await notification.save();
+    await Notification.insertMany(notifications);
 
-    //send notification
+    // Send notifications
     const sendPromises = notifications.map(async (notification) => {
       const notificationSendResponse = await sendToUserId(
         notification.user_id,
@@ -55,14 +51,9 @@ storeNotification = async (req, res, next) => {
     });
     await Promise.all(sendPromises);
 
-    // let notificationSendResponse = await sendToUserId(user_id, notification);
-    // if (!notificationSendResponse.success) {
-    //   return next({ statusCode: 500, message: notificationSendResponse.error });
-    // }
-
     return res.status(200).json({
       statusCode: 200,
-      message: "Notification stored and sent successfully",
+      message: "Notifications stored and sent successfully",
       data: [],
     });
   } catch (error) {

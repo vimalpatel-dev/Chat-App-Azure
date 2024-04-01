@@ -1,19 +1,28 @@
+const Notification = require("../Models/notification.schema");
+const connectDB = require("../SharedCode/mongo_connection");
+
 module.exports = async function (context, req) {
   try {
-    // await connectToDatabase();
     const { userId } = req.query;
     if (!userId) {
       context.res = {
         status: 400,
-        body: "Provide the user ID",
+        body: {
+          statusCode: 400,
+          message: "Provide the user ID",
+        },
       };
       context.done();
       return;
     }
+
+    await connectDB();
+
     await Notification.updateMany(
       { deleted: false, read: false, user_id: userId },
       { read: true, read_datetime: new Date() }
     );
+
     context.res = {
       status: 200,
       body: {
@@ -23,10 +32,13 @@ module.exports = async function (context, req) {
       },
     };
   } catch (error) {
-    console.error("Error reading all notifications:", error);
     context.res = {
       status: 500,
-      body: "An error occurred while marking all notifications as read",
+      body: {
+        statusCode: 500,
+        message: "An error occurred while marking all notifications as read",
+      },
     };
+    context.done();
   }
 };

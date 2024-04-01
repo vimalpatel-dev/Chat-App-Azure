@@ -1,15 +1,23 @@
+const Notification = require("../Models/notification.schema");
+const connectDB = require("../SharedCode/mongo_connection");
+
 module.exports = async function (context, req) {
   try {
-    await connectToDatabase();
     const { page = 1, limit = 10, userId } = req.query;
     if (!userId) {
       context.res = {
         status: 400,
-        body: "Provide the user ID",
+        body: {
+          statusCode: 400,
+          message: "Provide the user ID",
+        },
       };
+      context.done();
       return;
     }
     const skipCount = (page - 1) * limit;
+
+    await connectDB();
 
     const notifications = await Notification.find({
       deleted: false,
@@ -40,10 +48,13 @@ module.exports = async function (context, req) {
       },
     };
   } catch (error) {
-    console.error("Error getting notifications:", error);
     context.res = {
       status: 500,
-      body: "An error occurred while getting notifications",
+      body: {
+        statusCode: 500,
+        message: "An error occurred while getting notifications",
+      },
     };
+    context.done();
   }
 };

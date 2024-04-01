@@ -1,14 +1,22 @@
+const Notification = require("../Models/notification.schema");
+const connectDB = require("../SharedCode/mongo_connection");
+
 module.exports = async function (context, req) {
   try {
-    // await connectToDatabase();
     const { userId } = req.query;
     if (!userId) {
       context.res = {
         status: 400,
-        body: "Provide the user ID",
+        body: {
+          statusCode: 400,
+          message: "Provide the user ID",
+        },
       };
-      return;
+      context.done();
     }
+
+    await connectDB();
+
     await Notification.updateMany(
       { deleted: false, user_id: userId },
       { deleted: true, deleted_time: new Date() }
@@ -22,10 +30,13 @@ module.exports = async function (context, req) {
       },
     };
   } catch (error) {
-    console.error("Error clearing all notifications:", error);
     context.res = {
       status: 500,
-      body: "An error occurred while clearing all notifications",
+      body: {
+        statusCode: 500,
+        message: "An error occurred while clearing all notifications",
+      },
     };
+    context.done();
   }
 };

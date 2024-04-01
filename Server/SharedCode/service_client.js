@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 const { WebPubSubServiceClient } = require("@azure/web-pubsub");
 
 const hubName = process.env.HUB_NAME;

@@ -1,8 +1,8 @@
-const Notification = require("../Models/notification.schema");
+const totalUnreadCount = require("../SharedCode/total_unredcount");
 
 module.exports = async function (context, req) {
   try {
-    const { userId } = req.query;
+    const userId = req.query.userId;
     if (!userId) {
       context.res = {
         status: 400,
@@ -15,17 +15,14 @@ module.exports = async function (context, req) {
       return;
     }
 
-    await Notification.updateMany(
-      { deleted: false, read: false, user_id: userId },
-      { read: true, read_datetime: new Date() }
-    );
+    const unreadCount = await totalUnreadCount(userId);
 
     context.res = {
       status: 200,
       body: {
         statusCode: 200,
-        message: "All notifications marked as read",
-        data: [],
+        message: "Unread count retrieved successfully",
+        data: unreadCount,
       },
     };
   } catch (error) {
@@ -33,7 +30,7 @@ module.exports = async function (context, req) {
       status: 500,
       body: {
         statusCode: 500,
-        message: "An error occurred while marking all notifications as read",
+        message: "An error occurred while retrieving unread count ",
       },
     };
     context.done();

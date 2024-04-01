@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "AzureWebJobsStorage": "",
+    "ENDPOINT_URL": "",
+    "HUB_NAME":"",
+    "MONGODB_URL":"",
+    "DBNAME":""
+  },
+  "ConnectionStrings": {}
+}

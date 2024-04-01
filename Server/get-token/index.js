@@ -17,7 +17,6 @@ module.exports = async function (context, req) {
       status: 200,
       body: token.url,
     };
-    context.done();
   } catch (error) {
     context.res = {
       status: 500,

@@ -1,5 +1,5 @@
 const Notification = require("../Models/notification.schema");
-const connectDB = require("../SharedCode/mongo_connection");
+const totalUnreadCount = require("../SharedCode/total_unredcount");
 
 module.exports = async function (context, req) {
   try {
@@ -16,8 +16,6 @@ module.exports = async function (context, req) {
       return;
     }
     const skipCount = (page - 1) * limit;
-
-    await connectDB();
 
     const notifications = await Notification.find({
       deleted: false,

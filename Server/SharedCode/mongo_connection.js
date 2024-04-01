@@ -10,8 +10,8 @@ const connectDB = async () => {
       const dbName = process.env.DBNAME || "notification";
 
       conn = await mongoose.connect(`${mongoURL}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
         dbName: dbName,
       });
       console.log(`MongoDB Connected at : ${conn.connection.host}`);

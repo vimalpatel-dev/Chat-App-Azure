@@ -1,6 +1,5 @@
 const sendToUserId = require("../SharedCode/send_to_user_id");
 const Notification = require("../Models/notification.schema");
-const connectDB = require("../SharedCode/mongo_connection");
 const Joi = require("joi");
 
 const notificationSchema = Joi.object({
@@ -23,9 +22,7 @@ module.exports = async function (context, req) {
       context.done();
       return;
     }
-
     const { title, message, user_id } = req.body;
-    await connectDB();
 
     const notifications = user_id.map((id) => ({
       title,
@@ -64,7 +61,7 @@ module.exports = async function (context, req) {
       status: 500,
       body: {
         statusCode: 500,
-        message: error.message,
+        message: "An error occurred while storing notifications ",
       },
     };
     context.done();

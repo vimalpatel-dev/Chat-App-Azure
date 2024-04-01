@@ -7,7 +7,8 @@
       "name": "req",
       "methods": [
         "get"
-      ]
+      ],
+      "route": "event-stream/get-access-token"
     },
     {
       "type": "http",

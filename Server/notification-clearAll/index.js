@@ -1,5 +1,4 @@
 const Notification = require("../Models/notification.schema");
-const connectDB = require("../SharedCode/mongo_connection");
 
 module.exports = async function (context, req) {
   try {
@@ -14,8 +13,6 @@ module.exports = async function (context, req) {
       };
       context.done();
     }
-
-    await connectDB();
 
     await Notification.updateMany(
       { deleted: false, user_id: userId },

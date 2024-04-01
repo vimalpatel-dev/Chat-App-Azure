@@ -1,5 +1,4 @@
 const serviceClient = require("../SharedCode/service_client");
-const { storeNotificationUsingFrontEnd } = require("./notification_controller");
 
 async function sendToUserId(userId, dataPayload) {
   try {

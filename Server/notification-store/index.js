@@ -1,11 +1,10 @@
 const sendToUserId = require("../SharedCode/send_to_user_id");
 const Notification = require("../Models/notification.schema");
-const connectToDatabase = require("../SharedCode/connection_mongodb");
-const { storeNotification } = require("../SharedCode/state");
+const connectDB = require("../SharedCode/mongo_connection");
 
 module.exports = async function (context, req) {
   try {
-    await connectToDatabase();
+    await connectDB();
     const { title, message, user_id } = req.body;
 
     const notifications = user_id.map((id) => ({

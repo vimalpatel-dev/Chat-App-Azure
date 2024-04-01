@@ -26,3 +26,4 @@ yarn-error.log*
 
 Server/.env
 Server/node_modules
+Server/local.settings.json

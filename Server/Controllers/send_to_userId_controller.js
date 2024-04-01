@@ -1,4 +1,4 @@
-const serviceClient = require("../Util/service_client");
+const serviceClient = require("../SharedCode/service_client");
 const { storeNotificationUsingFrontEnd } = require("./notification_controller");
 
 // async function sendToUserId(req, res, next) {

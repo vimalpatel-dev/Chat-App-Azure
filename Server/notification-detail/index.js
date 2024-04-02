@@ -17,7 +17,7 @@ module.exports = async function (context, req) {
     }
 
     // Retrieve the notification details based on ID and user ID
-    const notification = await Notification.findOne({
+    let notification = await Notification.findOne({
       _id: notificationId,
     }).select("-__v");
 
@@ -35,7 +35,7 @@ module.exports = async function (context, req) {
 
     // Mark the notification as read if it's unread
     if (!notification.read) {
-      await Notification.updateOne(
+      notification = await Notification.updateOne(
         { _id: notificationId },
         { read: true, read_datetime: new Date() }
       );

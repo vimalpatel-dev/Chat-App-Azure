@@ -16,7 +16,7 @@ module.exports = async function (context, req) {
         status: 400,
         body: {
           statusCode: 400,
-          message: error.details[0].message,
+          message: error.details[0].message.replace(/"/g, ""),
         },
       };
       context.done();

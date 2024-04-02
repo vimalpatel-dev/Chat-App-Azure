@@ -3,8 +3,13 @@ const serviceClient = require("../SharedCode/service_client");
 module.exports = async function (context, req) {
   try {
     if (!req.query?.userId) {
-      context.res = { status: 400, body: "user id not provided" };
-      context.done();
+      context.res = {
+        status: 400,
+        body: {
+          statusCode: 400,
+          message: "Provide the user ID",
+        },
+      };
       return;
     }
 
@@ -17,11 +22,12 @@ module.exports = async function (context, req) {
       status: 200,
       body: token.url,
     };
+    return;
   } catch (error) {
     context.res = {
       status: 500,
       body: error.message,
     };
-    context.done();
+    return;
   }
 };

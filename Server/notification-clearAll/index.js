@@ -11,7 +11,7 @@ module.exports = async function (context, req) {
           message: "Provide the user ID",
         },
       };
-      context.done();
+      return;
     }
 
     await Notification.updateMany(
@@ -26,6 +26,7 @@ module.exports = async function (context, req) {
         data: [],
       },
     };
+    return;
   } catch (error) {
     context.res = {
       status: 500,
@@ -34,6 +35,6 @@ module.exports = async function (context, req) {
         message: "An error occurred while clearing all notifications",
       },
     };
-    context.done();
+    return;
   }
 };

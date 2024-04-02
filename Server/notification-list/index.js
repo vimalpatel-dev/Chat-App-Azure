@@ -12,7 +12,6 @@ module.exports = async function (context, req) {
           message: "Provide the user ID",
         },
       };
-      context.done();
       return;
     }
     const skipCount = (page - 1) * limit;
@@ -45,6 +44,7 @@ module.exports = async function (context, req) {
         },
       },
     };
+    return;
   } catch (error) {
     context.res = {
       status: 500,
@@ -53,6 +53,6 @@ module.exports = async function (context, req) {
         message: "An error occurred while getting notifications",
       },
     };
-    context.done();
+    return;
   }
 };

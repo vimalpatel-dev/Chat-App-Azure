@@ -11,7 +11,6 @@ module.exports = async function (context, req) {
           message: "Provide the user ID",
         },
       };
-      context.done();
       return;
     }
 
@@ -25,6 +24,7 @@ module.exports = async function (context, req) {
         data: unreadCount,
       },
     };
+    return;
   } catch (error) {
     context.res = {
       status: 500,
@@ -33,6 +33,6 @@ module.exports = async function (context, req) {
         message: "An error occurred while retrieving unread count ",
       },
     };
-    context.done();
+    return;
   }
 };

@@ -19,7 +19,6 @@ module.exports = async function (context, req) {
           message: error.details[0].message.replace(/"/g, ""),
         },
       };
-      context.done();
       return;
     }
     const { title, message, user_id } = req.body;
@@ -55,6 +54,7 @@ module.exports = async function (context, req) {
         data: [],
       },
     };
+    return;
   } catch (error) {
     console.error("Error storing notifications:", error);
     context.res = {
@@ -64,6 +64,6 @@ module.exports = async function (context, req) {
         message: "An error occurred while storing notifications ",
       },
     };
-    context.done();
+    return;
   }
 };

@@ -18,6 +18,7 @@ module.exports = async function (context, req) {
     // Retrieve the notification details based on ID and user ID
     let notification = await Notification.findOne({
       _id: notificationId,
+      deleted: false,
     }).select("-__v");
 
     if (!notification) {
@@ -25,35 +26,33 @@ module.exports = async function (context, req) {
         status: 404,
         body: {
           statusCode: 404,
-          message: "Notification not found",
+          message: "Notification not found or Already deleted",
           data: null,
         },
       };
       return;
     }
 
-    // Mark the notification as read if it's unread
-    if (!notification.read) {
-      notification = await Notification.updateOne(
-        { _id: notificationId },
-        { read: true, read_datetime: new Date() }
-      );
-    }
+    await Notification.updateOne(
+      { _id: notificationId, deleted: false },
+      { deleted: true, deleted_time: new Date() }
+    );
 
     context.res = {
       status: 200,
       body: {
         statusCode: 200,
-        message: "Notification retrieved successfully",
-        data: notification,
+        message: "notification soft deleted",
+        data: [],
       },
     };
+    return;
   } catch (error) {
     context.res = {
       status: 500,
       body: {
         statusCode: 500,
-        message: "An error occurred while getting notification",
+        message: "An error occurred while clearing notification",
       },
     };
     return;

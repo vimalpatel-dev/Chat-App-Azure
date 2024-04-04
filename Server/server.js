@@ -1,8 +1,7 @@
 const connectAzureDB = require("./SharedCode/azure_mssql_connect");
 
-async function connnectMongodbDatabase() {
+async function connnectAzurebDatabase() {
   await connectAzureDB();
-  console.log("azure database connected!");
 }
 
-connnectMongodbDatabase();
+connnectAzurebDatabase();

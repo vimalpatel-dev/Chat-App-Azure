@@ -4,10 +4,13 @@
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
     "AzureWebJobsStorage": "",
-    "ENDPOINT_URL": "",
-    "HUB_NAME":"",
-    "MONGODB_URL":"",
-    "DBNAME":""
+    "ENDPOINT_URL": "Endpoint=https://pubsub123.webpubsub.azure.com;AccessKey=+Dq6qJKrUNNrBzinCoNAj5X4nKFlRTvg2SnCyu3qJVE=;Version=1.0;",
+    "HUB_NAME":"PubSub123",
+    "DB_USER":"azureuser",
+    "DB_PASSWORD":"VimalP@ssw0rd",
+    "DB_SERVER":"mssqlserver1.database.windows.net",
+    "DB_PORT":"1433",
+    "DB_NAME":"notification"
   },
   "ConnectionStrings": {}
 }

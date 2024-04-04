@@ -14,17 +14,20 @@ const config = {
   },
 };
 
-let connection = null;
+let connectionPool = null;
 
 async function connectAzureDB() {
   try {
-    if (!connection) {
-      connection = await sql.connect(config);
+    if (!connectionPool) {
+      connectionPool = await sql.connect(config);
       console.log("Databse Connected Successfully");
     }
   } catch (err) {
-    console.error(err.message, "Database Connection Error");
+    console.error("Database Connection Error", err.message);
   }
 }
 
-module.exports = connectAzureDB;
+module.exports = {
+  connectAzureDB,
+  connectionPool,
+};

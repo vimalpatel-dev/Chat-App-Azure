@@ -11,14 +11,6 @@ module.exports = async function (context, req) {
         400
       );
       return;
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
-      return;
     }
 
     let token = await serviceClient.getClientAccessToken({
@@ -32,10 +24,7 @@ module.exports = async function (context, req) {
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: error.message,
-    };
+    sendErrorResponse(context, error.message, error.message, 500);
     return;
   }
 };

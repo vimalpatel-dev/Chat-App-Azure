@@ -1,17 +1,17 @@
 const Notification = require("../Models/notification.schema");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const notificationId = req.params.notificationId;
 
     if (!notificationId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the notification ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "notification ID not provided",
+        "notification ID not provided",
+        400
+      );
       return;
     }
 
@@ -22,14 +22,12 @@ module.exports = async function (context, req) {
     }).select("-__v");
 
     if (!notification) {
-      context.res = {
-        status: 404,
-        body: {
-          statusCode: 404,
-          message: "Notification not found or Already deleted",
-          data: null,
-        },
-      };
+      sendErrorResponse(
+        context,
+        "Notification not found or Already deleted",
+        "Notification not found or Already deleted",
+        404
+      );
       return;
     }
 
@@ -41,20 +39,26 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "notification soft deleted",
-        data: [],
+        ResponseStatus: "Success",
+        Message: "notification soft deleted",
+        ResponseData: [],
       },
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while clearing notification",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while clearing notification",
+      "An error occurred while clearing notification",
+      500
+    );
+    // context.res = {
+    //   status: 500,
+    //   body: {
+    //     statusCode: 500,
+    //     message: "An error occurred while clearing notification",
+    //   },
+    // };
     return;
   }
 };

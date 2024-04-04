@@ -1,8 +1,16 @@
 const serviceClient = require("../SharedCode/service_client");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     if (!req.query?.userId) {
+      sendErrorResponse(
+        context,
+        "user ID not provided",
+        "user ID not provided",
+        400
+      );
+      return;
       context.res = {
         status: 400,
         body: {

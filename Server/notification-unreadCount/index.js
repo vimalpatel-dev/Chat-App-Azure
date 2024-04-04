@@ -1,16 +1,16 @@
 const totalUnreadCount = require("../SharedCode/total_unredcount");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const userId = req.query.userId;
     if (!userId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "user ID not provided",
+        "user ID not provided",
+        400
+      );
       return;
     }
 
@@ -19,20 +19,19 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "Unread count retrieved successfully",
-        data: unreadCount,
+        ResponseStatus: "Success",
+        Message: "Unread count retrieved successfully",
+        ResponseData: unreadCount,
       },
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while retrieving unread count ",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while retrieving unread count ",
+      "An error occurred while retrieving unread count ",
+      500
+    );
     return;
   }
 };

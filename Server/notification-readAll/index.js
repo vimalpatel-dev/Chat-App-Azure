@@ -1,16 +1,16 @@
 const Notification = require("../Models/notification.schema");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const { userId } = req.query;
     if (!userId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "user  ID not provided",
+        "user ID not provided",
+        400
+      );
       return;
     }
 
@@ -22,20 +22,19 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "All notifications marked as read",
-        data: [],
+        ResponseStatus: "Success",
+        Message: "All notifications marked as read",
+        ResponseData: [],
       },
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while marking all notifications as read",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while marking all notifications as read",
+      "An error occurred while marking all notifications as read",
+      500
+    );
     return;
   }
 };

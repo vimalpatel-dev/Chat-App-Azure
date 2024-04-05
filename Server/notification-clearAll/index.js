@@ -1,16 +1,16 @@
 const Notification = require("../Models/notification.schema");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const { userId } = req.query;
     if (!userId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "User ID not provided ",
+        "User ID not provided",
+        400
+      );
       return;
     }
 
@@ -21,20 +21,19 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "All notifications soft deleted",
-        data: [],
+        ResponseStatus: "Success",
+        Message: "All notifications soft deleted",
+        ResponseData: [],
       },
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while clearing all notifications",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while clearing all notifications",
+      "An error occurred while clearing all notifications",
+      500
+    );
     return;
   }
 };

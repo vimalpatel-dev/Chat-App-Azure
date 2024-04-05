@@ -1,17 +1,17 @@
 const Notification = require("../Models/notification.schema");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const notificationId = req.params.notificationId;
 
     if (!notificationId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the notification ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "notification ID not provided",
+        "notification ID not provided",
+        400
+      );
       return;
     }
 
@@ -21,14 +21,12 @@ module.exports = async function (context, req) {
     }).select("-__v");
 
     if (!notification) {
-      context.res = {
-        status: 404,
-        body: {
-          statusCode: 404,
-          message: "Notification not found",
-          data: null,
-        },
-      };
+      sendErrorResponse(
+        context,
+        "Notification not found",
+        "Notification not found",
+        404
+      );
       return;
     }
 
@@ -43,19 +41,18 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "Notification retrieved successfully",
-        data: notification,
+        ResponseStatus: "Success",
+        Message: "Notification retrieved successfully",
+        ResponseData: notification,
       },
     };
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while getting notification",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while getting notification",
+      "An error occurred while getting notification",
+      500
+    );
     return;
   }
 };

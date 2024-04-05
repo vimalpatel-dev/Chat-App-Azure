@@ -1,15 +1,15 @@
 const serviceClient = require("../SharedCode/service_client");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     if (!req.query?.userId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "user ID not provided",
+        "user ID not provided",
+        400
+      );
       return;
     }
 
@@ -24,10 +24,7 @@ module.exports = async function (context, req) {
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: error.message,
-    };
+    sendErrorResponse(context, error.message, error.message, 500);
     return;
   }
 };

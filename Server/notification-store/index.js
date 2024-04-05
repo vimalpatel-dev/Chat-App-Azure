@@ -1,4 +1,5 @@
 const sendToUserId = require("../SharedCode/send_to_user_id");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 const Notification = require("../Models/notification.schema");
 const Joi = require("joi");
 
@@ -12,13 +13,12 @@ module.exports = async function (context, req) {
   try {
     const { error } = notificationSchema.validate(req.body);
     if (error) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: error.details[0].message.replace(/"/g, ""),
-        },
-      };
+      sendErrorResponse(
+        context,
+        "Validation Failed",
+        error.details[0].message.replace(/"/g, ""),
+        400
+      );
       return;
     }
     const { title, message, user_id } = req.body;
@@ -49,21 +49,20 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "Notifications stored and sent successfully",
-        data: [],
+        ResponseStatus: "Success",
+        Message: "Notifications stored and sent successfully",
+        ResponseData: [],
       },
     };
     return;
   } catch (error) {
     console.error("Error storing notifications:", error);
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while storing notifications ",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while storing notifications ",
+      "An error occurred while storing notifications ",
+      500
+    );
     return;
   }
 };

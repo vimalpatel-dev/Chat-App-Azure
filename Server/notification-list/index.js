@@ -1,17 +1,17 @@
 const Notification = require("../Models/notification.schema");
 const totalUnreadCount = require("../SharedCode/total_unredcount");
+const sendErrorResponse = require("../SharedCode/errorResponse");
 
 module.exports = async function (context, req) {
   try {
     const { page = 1, limit = 10, userId } = req.query;
     if (!userId) {
-      context.res = {
-        status: 400,
-        body: {
-          statusCode: 400,
-          message: "Provide the user ID",
-        },
-      };
+      sendErrorResponse(
+        context,
+        "user ID not provided",
+        "user ID not provided",
+        400
+      );
       return;
     }
     const skipCount = (page - 1) * limit;
@@ -34,9 +34,9 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       body: {
-        statusCode: 200,
-        message: "Notifications retrieved successfully",
-        data: notifications,
+        ResponseStatus: "Success",
+        Message: "Notifications retrieved successfully",
+        ResponseData: notifications,
         pagination: {
           current_page: parseInt(page),
           total_records: totalRecords,
@@ -46,13 +46,12 @@ module.exports = async function (context, req) {
     };
     return;
   } catch (error) {
-    context.res = {
-      status: 500,
-      body: {
-        statusCode: 500,
-        message: "An error occurred while getting notifications",
-      },
-    };
+    sendErrorResponse(
+      context,
+      "An error occurred while getting notifications",
+      "An error occurred while getting notifications",
+      500
+    );
     return;
   }
 };

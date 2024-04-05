@@ -6,8 +6,8 @@ module.exports = async function (context, req) {
     if (!req.query?.userId) {
       sendErrorResponse(
         context,
-        "user ID not provided",
-        "user ID not provided",
+        "user Id not provided",
+        "user Id not provided",
         400
       );
       return;

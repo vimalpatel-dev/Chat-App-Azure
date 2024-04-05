@@ -41,7 +41,7 @@ const App = () => {
       getClientAccessUrl: async () =>
         (
           await fetch(
-            `${process.env.REACT_APP_BASE_URL}get-access-token?user=${user}`
+            `${process.env.REACT_APP_BASE_URL}event-stream/get-access-token?userId=${user}`
           )
         ).text(),
     });

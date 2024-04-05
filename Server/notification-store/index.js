@@ -35,7 +35,7 @@ module.exports = async function (context, req) {
       );
       if (!notificationSendResponse.success) {
         console.error(
-          "Failed to send notification to user ID:",
+          "Failed to send notification to user Id:",
           notification.user_id
         );
       }

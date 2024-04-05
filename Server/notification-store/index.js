@@ -1,10 +1,9 @@
 const sendToUserId = require("../SharedCode/send_to_user_id");
 const sendErrorResponse = require("../SharedCode/errorResponse");
-const Notification = require("../Models/notification.schema");
 const Joi = require("joi");
 
 const notificationSchema = Joi.object({
-  title: Joi.string().required(),
+  title: Joi.string(),
   message: Joi.string().required(),
   user_id: Joi.array().items(Joi.number()).min(1).required(),
 });
@@ -29,8 +28,6 @@ module.exports = async function (context, req) {
       user_id: id,
     }));
 
-    await Notification.insertMany(notifications);
-
     const sendPromises = notifications.map(async (notification) => {
       const notificationSendResponse = await sendToUserId(
         notification.user_id,
@@ -50,8 +47,12 @@ module.exports = async function (context, req) {
       status: 200,
       body: {
         ResponseStatus: "Success",
-        Message: "Notifications stored and sent successfully",
-        ResponseData: [],
+        Message: "Notifications sent successfully",
+        ResponseData: {
+          title: title,
+          message: message,
+          user_id: user_id,
+        },
       },
     };
     return;
@@ -59,8 +60,8 @@ module.exports = async function (context, req) {
     console.error("Error storing notifications:", error);
     sendErrorResponse(
       context,
-      "An error occurred while storing notifications ",
-      "An error occurred while storing notifications ",
+      "An error occurred while sent notifications ",
+      "An error occurred while sent notifications ",
       500
     );
     return;

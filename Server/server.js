@@ -1,7 +1,5 @@
-const connectDB = require("./SharedCode/mongo_connection");
-
 async function connnectMongodbDatabase() {
-  await connectDB();
+  // await connectDB();
   console.log("server js file");
 }
 
